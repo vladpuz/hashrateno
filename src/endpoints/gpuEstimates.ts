@@ -1,5 +1,11 @@
 import type { Device } from '../types.js'
 
+/* RequestParams */
+
+export interface GPUEstimatesRequestParams {
+  powerCost: number
+}
+
 /* ResponseData */
 
 export interface GPUEstimates {

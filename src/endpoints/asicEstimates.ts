@@ -1,5 +1,11 @@
 import type { Device } from '../types.js'
 
+/* RequestParams */
+
+export interface ASICEstimatesRequestParams {
+  powerCost: number
+}
+
 /* ResponseData */
 
 export interface ASICEstimates {

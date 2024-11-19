@@ -5,10 +5,6 @@ export interface Config {
   axiosConfig?: CreateAxiosDefaults
 }
 
-export interface EstimatesRequestParams {
-  powerCost: number
-}
-
 export interface Device {
   name: string
   brand: string

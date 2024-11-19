@@ -1,12 +1,12 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios'
 
-import type { ASICEstimatesResponseData } from './endpoints/asicEstimates.js'
+import type { ASICEstimatesRequestParams, ASICEstimatesResponseData } from './endpoints/asicEstimates.js'
 import type { BenchmarksRequestParams, BenchmarksResponseData } from './endpoints/benchmarks.js'
 import type { Coin, CoinsRequestParams, CoinsResponseData } from './endpoints/coins.js'
-import type { CPUEstimatesResponseData } from './endpoints/cpuEstimates.js'
-import type { FPGAEstimatesResponseData } from './endpoints/fpgaEstimates.js'
-import type { GPUEstimatesResponseData } from './endpoints/gpuEstimates.js'
-import type { Config, EstimatesRequestParams } from './types.js'
+import type { CPUEstimatesRequestParams, CPUEstimatesResponseData } from './endpoints/cpuEstimates.js'
+import type { FPGAEstimatesRequestParams, FPGAEstimatesResponseData } from './endpoints/fpgaEstimates.js'
+import type { GPUEstimatesRequestParams, GPUEstimatesResponseData } from './endpoints/gpuEstimates.js'
+import type { Config } from './types.js'
 
 class HashrateNO {
   public readonly axios: AxiosInstance
@@ -60,7 +60,7 @@ class HashrateNO {
   }
 
   public async gpuEstimates(
-    params?: EstimatesRequestParams,
+    params?: GPUEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<GPUEstimatesResponseData> {
     const response = await this.axios.request<GPUEstimatesResponseData>({
@@ -74,7 +74,7 @@ class HashrateNO {
   }
 
   public async asicEstimates(
-    params?: EstimatesRequestParams,
+    params?: ASICEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<ASICEstimatesResponseData> {
     const response = await this.axios.request<ASICEstimatesResponseData>({
@@ -88,7 +88,7 @@ class HashrateNO {
   }
 
   public async cpuEstimates(
-    params?: EstimatesRequestParams,
+    params?: CPUEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<CPUEstimatesResponseData> {
     const response = await this.axios.request<CPUEstimatesResponseData>({
@@ -102,7 +102,7 @@ class HashrateNO {
   }
 
   public async fpgaEstimates(
-    params?: EstimatesRequestParams,
+    params?: FPGAEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<FPGAEstimatesResponseData> {
     const response = await this.axios.request<FPGAEstimatesResponseData>({
