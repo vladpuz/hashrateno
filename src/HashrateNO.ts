@@ -33,85 +33,47 @@ class HashrateNO {
     params: BenchmarksRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<BenchmarksResponseData> {
-    const response = await this.axios.request<BenchmarksResponseData>({
-      ...config,
-      method: 'get',
-      url: '/benchmarks',
-      params,
-    })
-
+    const response = await this.axios.get<BenchmarksResponseData>('/benchmarks', { ...config, params })
     return response.data
   }
 
-  public async coins<Params extends CoinsRequestParams | undefined>(
+  public async coins<Params extends CoinsRequestParams | null>(
     params?: Params,
     config?: AxiosRequestConfig,
   ): Promise<Params extends CoinsRequestParams ? Coin : CoinsResponseData> {
-    const response = await this.axios.request<
-      Params extends CoinsRequestParams ? Coin : CoinsResponseData
-    >({
-      ...config,
-      method: 'get',
-      url: '/coins',
-      params,
-    })
-
+    const response = await this.axios.get<Params extends CoinsRequestParams ? Coin : CoinsResponseData>('/coins', { ...config, params })
     return response.data
   }
 
   public async gpuEstimates(
-    params?: GPUEstimatesRequestParams,
+    params?: GPUEstimatesRequestParams | null,
     config?: AxiosRequestConfig,
   ): Promise<GPUEstimatesResponseData> {
-    const response = await this.axios.request<GPUEstimatesResponseData>({
-      ...config,
-      method: 'get',
-      url: '/gpuEstimates',
-      params,
-    })
-
+    const response = await this.axios.get<GPUEstimatesResponseData>('/gpuEstimates', { ...config, params })
     return response.data
   }
 
   public async asicEstimates(
-    params?: ASICEstimatesRequestParams,
+    params?: ASICEstimatesRequestParams | null,
     config?: AxiosRequestConfig,
   ): Promise<ASICEstimatesResponseData> {
-    const response = await this.axios.request<ASICEstimatesResponseData>({
-      ...config,
-      method: 'get',
-      url: '/asicEstimates',
-      params,
-    })
-
+    const response = await this.axios.get<ASICEstimatesResponseData>('/asicEstimates', { ...config, params })
     return response.data
   }
 
   public async cpuEstimates(
-    params?: CPUEstimatesRequestParams,
+    params?: CPUEstimatesRequestParams | null,
     config?: AxiosRequestConfig,
   ): Promise<CPUEstimatesResponseData> {
-    const response = await this.axios.request<CPUEstimatesResponseData>({
-      ...config,
-      method: 'get',
-      url: '/cpuEstimates',
-      params,
-    })
-
+    const response = await this.axios.get<CPUEstimatesResponseData>('/cpuEstimates', { ...config, params })
     return response.data
   }
 
   public async fpgaEstimates(
-    params?: FPGAEstimatesRequestParams,
+    params?: FPGAEstimatesRequestParams | null,
     config?: AxiosRequestConfig,
   ): Promise<FPGAEstimatesResponseData> {
-    const response = await this.axios.request<FPGAEstimatesResponseData>({
-      ...config,
-      method: 'get',
-      url: '/fpgaEstimates',
-      params,
-    })
-
+    const response = await this.axios.get<FPGAEstimatesResponseData>('/fpgaEstimates', { ...config, params })
     return response.data
   }
 }
