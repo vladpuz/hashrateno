@@ -1,6 +1,6 @@
 {
   "name": "hashrateno",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "description": "Hashrate.no API client",
   "repository": {
@@ -30,16 +30,17 @@
     "upgrade": "npm-check-updates --peer --upgrade && npm update"
   },
   "dependencies": {
-    "axios": "^1.7.8"
+    "axios": "^1.7.9",
+    "file-system-cache": "^3.0.0-alpha.8"
   },
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.5",
-    "eslint": "^9.16.0",
-    "eslint-config-vladpuz": "^0.17.0",
+    "eslint": "^9.17.0",
+    "eslint-config-vladpuz": "^0.20.0",
     "husky": "^9.1.7",
     "jiti": "^2.4.1",
     "npm-check-updates": "^17.1.11",
-    "prettier": "^3.4.1",
+    "prettier": "^3.4.2",
     "prettier-config-vladpuz": "^0.9.0",
     "rimraf": "^6.0.1",
     "typescript": "^5.7.2"
