@@ -1,7 +1,7 @@
 /* RequestParams */
 
 export interface CoinsRequestParams {
-  coin: string
+  coin?: string
 }
 
 /* ResponseData */

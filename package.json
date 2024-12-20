@@ -1,6 +1,6 @@
 {
   "name": "hashrateno",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "type": "module",
   "description": "Hashrate.no API client",
   "repository": {
@@ -36,9 +36,9 @@
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.5",
     "eslint": "^9.17.0",
-    "eslint-config-vladpuz": "^0.20.0",
+    "eslint-config-vladpuz": "^0.22.0",
     "husky": "^9.1.7",
-    "jiti": "^2.4.1",
+    "jiti": "^2.4.2",
     "npm-check-updates": "^17.1.11",
     "prettier": "^3.4.2",
     "prettier-config-vladpuz": "^0.9.0",

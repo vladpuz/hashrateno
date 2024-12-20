@@ -3,7 +3,7 @@ import type { Device } from '../types.js'
 /* RequestParams */
 
 export interface FPGAEstimatesRequestParams {
-  powerCost: number
+  powerCost?: number
 }
 
 /* ResponseData */
