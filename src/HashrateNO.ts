@@ -11,6 +11,8 @@ import type { Config } from './types.js'
 
 /* eslint @typescript-eslint/no-unsafe-assignment: off -- No generic in file-system-cache get() */
 
+const EMPTY_CACHE = Symbol('Empty cache')
+
 class HashrateNO {
   public axios: AxiosInstance
   public fileSystemCache: FileSystemCache
@@ -40,11 +42,11 @@ class HashrateNO {
     params: BenchmarksRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<BenchmarksResponseData> {
-    type Data = BenchmarksResponseData | undefined
+    type Data = BenchmarksResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.benchmarks.name, params })
-    const data: Data = await this.fileSystemCache.get(key)
+    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
 
-    if (data != null) {
+    if (data !== EMPTY_CACHE) {
       return data
     }
 
@@ -65,11 +67,11 @@ class HashrateNO {
       ? Coin
       : CoinsResponseData
 
-    type Data = ResponseData | undefined
+    type Data = ResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.coins.name, params })
-    const data: Data = await this.fileSystemCache.get(key)
+    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
 
-    if (data != null) {
+    if (data !== EMPTY_CACHE) {
       return data
     }
 
@@ -82,11 +84,11 @@ class HashrateNO {
     params: GPUEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<GPUEstimatesResponseData> {
-    type Data = GPUEstimatesResponseData | undefined
+    type Data = GPUEstimatesResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.gpuEstimates.name, params })
-    const data: Data = await this.fileSystemCache.get(key)
+    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
 
-    if (data != null) {
+    if (data !== EMPTY_CACHE) {
       return data
     }
 
@@ -99,11 +101,11 @@ class HashrateNO {
     params: ASICEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<ASICEstimatesResponseData> {
-    type Data = ASICEstimatesResponseData | undefined
+    type Data = ASICEstimatesResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.asicEstimates.name, params })
-    const data: Data = await this.fileSystemCache.get(key)
+    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
 
-    if (data != null) {
+    if (data !== EMPTY_CACHE) {
       return data
     }
 
@@ -116,11 +118,11 @@ class HashrateNO {
     params: CPUEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<CPUEstimatesResponseData> {
-    type Data = CPUEstimatesResponseData | undefined
+    type Data = CPUEstimatesResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.cpuEstimates.name, params })
-    const data: Data = await this.fileSystemCache.get(key)
+    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
 
-    if (data != null) {
+    if (data !== EMPTY_CACHE) {
       return data
     }
 
@@ -133,11 +135,11 @@ class HashrateNO {
     params: FPGAEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<FPGAEstimatesResponseData> {
-    type Data = FPGAEstimatesResponseData | undefined
+    type Data = FPGAEstimatesResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.fpgaEstimates.name, params })
-    const data: Data = await this.fileSystemCache.get(key)
+    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
 
-    if (data != null) {
+    if (data !== EMPTY_CACHE) {
       return data
     }
 
