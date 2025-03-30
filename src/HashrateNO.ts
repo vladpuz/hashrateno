@@ -9,27 +9,25 @@ import type { FPGAEstimatesRequestParams, FPGAEstimatesResponseData } from './en
 import type { GPUEstimatesRequestParams, GPUEstimatesResponseData } from './endpoints/gpuEstimates.js'
 import type { Config } from './types.js'
 
-/* eslint @typescript-eslint/no-unsafe-assignment: off -- No generic in file-system-cache get() */
-
-const EMPTY_CACHE = Symbol('Empty cache')
+/* eslint @typescript-eslint/no-unsafe-assignment: off */
 
 class HashrateNO {
   public axios: AxiosInstance
-  public fileSystemCache: FileSystemCache
+  public cache: FileSystemCache
 
   public constructor(config: Config) {
-    this.fileSystemCache = new FileSystemCache({
+    this.cache = new FileSystemCache({
       ttl: 24 * 60 * 60,
-      ...config.fileSystemCacheOptions,
+      ...config.cacheOptions,
     })
 
     this.axios = axios.create({
-      ...config.axiosConfig,
+      ...config.axiosOptions,
       baseURL: 'https://api.hashrate.no/v1',
     })
 
     this.axios.interceptors.request.use((request) => {
-      (request.params as unknown) = {
+      request.params = {
         ...request.params,
         apiKey: config.apiKey,
       }
@@ -42,109 +40,109 @@ class HashrateNO {
     params: BenchmarksRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<BenchmarksResponseData> {
-    type Data = BenchmarksResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.benchmarks.name, params })
-    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
+    const data: BenchmarksResponseData | undefined = await this.cache.get(key)
 
-    if (data !== EMPTY_CACHE) {
+    if (data !== undefined) {
       return data
     }
 
     const response = await this.axios.get<BenchmarksResponseData>('/benchmarks', { ...config, params })
-    await this.fileSystemCache.set(key, response.data)
+    await this.cache.set(key, response.data)
     return response.data
   }
 
   public async coins<
-    Params extends Required<CoinsRequestParams> | CoinsRequestParams,
+    Params extends (
+        Required<CoinsRequestParams> | CoinsRequestParams
+    ) = CoinsRequestParams,
   >(
-    params: Params,
+    params?: Params,
     config?: AxiosRequestConfig,
   ): Promise<
       Params extends Required<CoinsRequestParams> ? Coin : CoinsResponseData
     > {
-    type ResponseData = Params extends Required<CoinsRequestParams>
+    type Data = Params extends Required<CoinsRequestParams>
       ? Coin
       : CoinsResponseData
 
-    type Data = ResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.coins.name, params })
-    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
+    const data: Data | undefined = await this.cache.get(key)
 
-    if (data !== EMPTY_CACHE) {
+    if (data !== undefined) {
       return data
     }
 
-    const response = await this.axios.get<ResponseData>('/coins', { ...config, params })
-    await this.fileSystemCache.set(key, response.data)
+    const response = await this.axios.get<Data>('/coins', { ...config, params })
+    await this.cache.set(key, response.data)
     return response.data
   }
 
   public async gpuEstimates(
-    params: GPUEstimatesRequestParams,
+    params?: GPUEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<GPUEstimatesResponseData> {
-    type Data = GPUEstimatesResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.gpuEstimates.name, params })
-    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
+    const data: (GPUEstimatesResponseData | undefined)
+        = await this.cache.get(key)
 
-    if (data !== EMPTY_CACHE) {
+    if (data !== undefined) {
       return data
     }
 
     const response = await this.axios.get<GPUEstimatesResponseData>('/gpuEstimates', { ...config, params })
-    await this.fileSystemCache.set(key, response.data)
+    await this.cache.set(key, response.data)
     return response.data
   }
 
   public async asicEstimates(
-    params: ASICEstimatesRequestParams,
+    params?: ASICEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<ASICEstimatesResponseData> {
-    type Data = ASICEstimatesResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.asicEstimates.name, params })
-    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
+    const data: (ASICEstimatesResponseData | undefined)
+        = await this.cache.get(key)
 
-    if (data !== EMPTY_CACHE) {
+    if (data !== undefined) {
       return data
     }
 
     const response = await this.axios.get<ASICEstimatesResponseData>('/asicEstimates', { ...config, params })
-    await this.fileSystemCache.set(key, response.data)
+    await this.cache.set(key, response.data)
     return response.data
   }
 
   public async cpuEstimates(
-    params: CPUEstimatesRequestParams,
+    params?: CPUEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<CPUEstimatesResponseData> {
-    type Data = CPUEstimatesResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.cpuEstimates.name, params })
-    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
+    const data: (CPUEstimatesResponseData | undefined)
+        = await this.cache.get(key)
 
-    if (data !== EMPTY_CACHE) {
+    if (data !== undefined) {
       return data
     }
 
     const response = await this.axios.get<CPUEstimatesResponseData>('/cpuEstimates', { ...config, params })
-    await this.fileSystemCache.set(key, response.data)
+    await this.cache.set(key, response.data)
     return response.data
   }
 
   public async fpgaEstimates(
-    params: FPGAEstimatesRequestParams,
+    params?: FPGAEstimatesRequestParams,
     config?: AxiosRequestConfig,
   ): Promise<FPGAEstimatesResponseData> {
-    type Data = FPGAEstimatesResponseData | typeof EMPTY_CACHE
     const key = JSON.stringify({ name: this.fpgaEstimates.name, params })
-    const data: Data = await this.fileSystemCache.get(key, EMPTY_CACHE)
+    const data: (FPGAEstimatesResponseData | undefined)
+        = await this.cache.get(key)
 
-    if (data !== EMPTY_CACHE) {
+    if (data !== undefined) {
       return data
     }
 
     const response = await this.axios.get<FPGAEstimatesResponseData>('/fpgaEstimates', { ...config, params })
-    await this.fileSystemCache.set(key, response.data)
+    await this.cache.set(key, response.data)
     return response.data
   }
 }

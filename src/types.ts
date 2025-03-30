@@ -3,8 +3,8 @@ import type { FileSystemCache } from 'file-system-cache'
 
 export interface Config {
   apiKey: string
-  axiosConfig?: CreateAxiosDefaults
-  fileSystemCacheOptions?: ConstructorParameters<typeof FileSystemCache>[0]
+  axiosOptions?: CreateAxiosDefaults
+  cacheOptions?: ConstructorParameters<typeof FileSystemCache>[0]
 }
 
 export interface Device {
