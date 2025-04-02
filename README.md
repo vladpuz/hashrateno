@@ -104,3 +104,11 @@ const hashrateno = new HashrateNO({
   },
 })
 ```
+
+Значение ttl по умолчанию экспортируется как константа:
+
+```typescript
+import { CACHE_TTL } from 'hashrateno'
+
+console.log(CACHE_TTL)
+```

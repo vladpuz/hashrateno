@@ -11,13 +11,15 @@ import type { Config } from './types.js'
 
 /* eslint @typescript-eslint/no-unsafe-assignment: off */
 
+export const CACHE_TTL = 24 * 60 * 60
+
 class HashrateNO {
   public axios: AxiosInstance
   public cache: FileSystemCache
 
   public constructor(config: Config) {
     this.cache = new FileSystemCache({
-      ttl: 24 * 60 * 60,
+      ttl: CACHE_TTL,
       ...config.cacheOptions,
     })
 
