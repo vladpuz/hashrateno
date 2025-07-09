@@ -1,13 +1,25 @@
 import type { CreateAxiosDefaults } from 'axios'
-import type { FileSystemCache } from 'file-system-cache'
 
-export interface Config {
-  apiKey: string
+export interface Options {
   axiosOptions?: CreateAxiosDefaults
-  cacheOptions?: ConstructorParameters<typeof FileSystemCache>[0]
 }
 
 export interface Device {
   name: string
   brand: string
+}
+
+export interface EstimateData {
+  ticker: string
+  yield: number
+  revenue: number
+  profit: number
+}
+
+export interface Estimate {
+  device: Device
+  profit: EstimateData
+  profit24h: EstimateData
+  revenue: EstimateData
+  revenue24h: EstimateData
 }

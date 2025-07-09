@@ -1,8 +1,9 @@
 import vladpuz from 'eslint-config-vladpuz'
 
-export default [
-  ...vladpuz(),
-  {
-    ignores: ['build'],
-  },
-]
+const config = vladpuz()
+
+config.push({
+  ignores: ['build'],
+})
+
+export default config

@@ -2,32 +2,28 @@
 
 > Hashrate.no API client
 
-Особенности:
+Features:
 
-- Базируется на [axios](https://github.com/axios/axios)
-- Кеширует данные в файловую систему через
-  [file-system-cache](https://github.com/philcockfield/file-system-cache), чтобы
-  не выходить за лимиты вызовов API
+- Based on [axios](https://github.com/axios/axios)
+- Error handling through try...catch and instanceof
 
-Официальная документация: [api.hashrate.no](https://api.hashrate.no)
+Official documentation: [hashrate.no/c/api](https://hashrate.no/c/api)
 
-## Установка
+## Installation
 
 ```shell
 npm install hashrateno
 ```
 
-## Использование
+## Usage
 
-### Создание экземпляра
+### Creating an instance
 
 ```typescript
 import HashrateNO from 'hashrateno'
 
-const hashrateno = new HashrateNO({
-  apiKey: '<API_KEY>', // (required)
+const hashrateno = new HashrateNO('<API_KEY>', {
   axiosOptions: {}, // (optional) Axios instance options https://github.com/axios/axios
-  cacheOptions: {}, // (optional) Cache instance options https://github.com/philcockfield/file-system-cache
 })
 ```
 
@@ -49,16 +45,17 @@ const coin = await hashrateno.coins({ coin: 'RVN' }) // One coin
 ```typescript
 const powerCost = 0.1 // (optional) Power cost in USD
 
-const gpuEstimates = await hashrateno.gpuEstimates({ powerCost })
 const asicEstimates = await hashrateno.asicEstimates({ powerCost })
 const cpuEstimates = await hashrateno.cpuEstimates({ powerCost })
+const depinEstimates = await hashrateno.depinEstimates({ powerCost })
 const fpgaEstimates = await hashrateno.fpgaEstimates({ powerCost })
+const gpuEstimates = await hashrateno.gpuEstimates({ powerCost })
 ```
 
-### Конфигурация запросов
+### Request Configuration
 
-Каждый метод принимает опциональную конфигурацию запроса для axios последним
-параметром, например:
+All methods accept an optional request configuration for axios as the last
+parameter, for example:
 
 ```typescript
 const benchmarks = await hashrateno.benchmarks(
@@ -69,46 +66,19 @@ const benchmarks = await hashrateno.benchmarks(
 )
 ```
 
-### Доступ к экземпляру axios
+### Accessing axios instance
 
-Используйте поле `hashrateno.axios`.
+Use the field `hashrateno.axios`.
 
-Обратитесь к документации [axios](https://github.com/axios/axios).
+Refer to the documentation [axios](https://github.com/axios/axios).
 
-### Доступ к экземпляру file-system-cache
+## API Call Limits
 
-Используйте поле `hashrateno.cache`.
+The free plan of Hashrate.no provides only 100 API calls per month. To bypass
+this, you can cache data in memory, file system, or switch to a paid plan.
 
-Обратитесь к документации
+A good library for caching data in the file system:
 [file-system-cache](https://github.com/philcockfield/file-system-cache).
 
-### Кеширование
-
-Бесплатный план на hashrate.no в данный момент имеет ограничение на 100 запросов
-в месяц, поэтому эта библиотека кеширует данные каждого уникального запроса в
-файловую систему, чтобы обойти это ограничение.
-
-По умолчанию значение времени жизни кеша (ttl) установлено на 24 часа и исходит
-из того, что вы будете делать не более чем 3 уникальных запроса в день.
-
-Если вы делаете больше запросов в день, или приобрели платный тариф измените
-значение ttl под себя:
-
-```typescript
-import HashrateNO from 'hashrateno'
-
-const hashrateno = new HashrateNO({
-  apiKey: '<API_KEY>',
-  cacheOptions: {
-    ttl: 60 * 60 * 24 * 2, // 2 days
-  },
-})
-```
-
-Значение ttl по умолчанию экспортируется как константа:
-
-```typescript
-import { CACHE_TTL } from 'hashrateno'
-
-console.log(CACHE_TTL)
-```
+The advantage of caching data in the file system is that the data will not be
+lost after restarting your application.

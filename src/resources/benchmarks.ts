@@ -9,9 +9,11 @@ export interface BenchmarksRequestParams {
 export interface Benchmark {
   name: string
   short: string
-  hashrate: number
-  power: number
+  deviceType: string
+  brandID: string
+  hashrate: string
+  power: string
   efficiency: number
 }
 
-export type BenchmarksResponseData = Benchmark[]
+export type BenchmarksResponseData = Record<string, Benchmark>
