@@ -4,8 +4,9 @@
 
 Features:
 
-- Based on [axios](https://github.com/axios/axios)
-- Error handling through try...catch and instanceof
+- Based on native fetch
+- Convenient error handling
+- Full type safety
 
 Official documentation: [hashrate.no/c/api](https://hashrate.no/c/api)
 
@@ -20,10 +21,12 @@ npm install hashrateno
 ### Creating an instance
 
 ```typescript
-import HashrateNO from 'hashrateno'
+import Hashrateno from 'hashrateno'
 
-const hashrateno = new HashrateNO('<API_KEY>', {
-  axiosOptions: {}, // (optional) Axios instance options https://github.com/axios/axios
+const hashrateno = new Hashrateno('API_KEY', {
+  baseURL: 'https://hashrate.no/api/v2', // (optional) Override the default base URL for the API
+  fetch: globalThis.fetch, // (optional) Specify a custom `fetch` function implementation
+  fetchOptions: {}, // (optional) Additional `RequestInit` options to be passed to `fetch` calls
 })
 ```
 
@@ -52,30 +55,90 @@ const fpgaEstimates = await hashrateno.fpgaEstimates({ powerCost })
 const gpuEstimates = await hashrateno.gpuEstimates({ powerCost })
 ```
 
-### Request Configuration
+## Fetch Options
 
-All methods accept an optional request configuration for axios as the last
-parameter, for example:
+All methods accept fetch options as the last parameter, for example:
 
 ```typescript
 const benchmarks = await hashrateno.benchmarks(
   { coin: 'RVN' },
   {
-    // axios config
+    // `RequestInit` options
   },
 )
 ```
 
-### Accessing axios instance
+## Error Handling
 
-Use the field `hashrateno.axios`.
+Use the `HashratenoError` class for error handling.
 
-Refer to the documentation [axios](https://github.com/axios/axios).
+Errors have fields with information `error.title` and `error.detail`.
+
+```typescript
+import { HashratenoError } from 'hashrateno'
+
+try {
+  const benchmarks = await hashrateno.benchmarks({ coin: 'RVN' })
+} catch (error) {
+  if (error instanceof HashratenoError) {
+    console.log(error.title, error.detail)
+  } else {
+    throw error
+  }
+}
+```
+
+## Retries
+
+For retrying, it's recommended to use
+[p-retry](https://github.com/sindresorhus/p-retry):
+
+```typescript
+import pRetry from 'p-retry'
+
+const benchmarks = await pRetry(
+  async () => {
+    return await hashrateno.benchmarks({ coin: 'RVN' })
+  },
+  {
+    retries: 5,
+  },
+)
+```
+
+## Timeouts
+
+Use `AbortSignal.timeout`.
+
+Options signal from fetchOptions and request options are combined. In the
+following example, the request will be aborted after 5 seconds, but it can also
+be aborted earlier by calling `controller.abort()`.
+
+```typescript
+const hashrateno = new Hashrateno('API_KEY', {
+  fetchOptions: {
+    signal: AbortSignal.timeout(5000),
+  },
+})
+
+const controller = new AbortController()
+
+setTimeout(() => {
+  controller.abort()
+}, 10000)
+
+const benchmarks = await hashrateno.benchmarks(
+  { coin: 'RVN' },
+  {
+    signal: controller.signal, // Combined with `AbortSignal.timeout(5000)`
+  },
+)
+```
 
 ## API Call Limits
 
 The free plan of Hashrate.no provides only 100 API calls per month. To bypass
-this, you can cache data in memory, file system, or switch to a paid plan.
+this, you can cache data in memory, file system or upgrade to a paid plan.
 
 A good library for caching data in the file system:
 [file-system-cache](https://github.com/philcockfield/file-system-cache).

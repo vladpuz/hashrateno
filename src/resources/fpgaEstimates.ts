@@ -1,11 +1,5 @@
-import type { Estimate } from '../types.js'
+import type { EstimatesRequestParams, EstimatesResponseData } from '../types.ts'
 
-/* RequestParams */
+export type FpgaEstimatesRequestParams = EstimatesRequestParams
 
-export interface FpgaEstimatesRequestParams {
-  powerCost?: number
-}
-
-/* ResponseData */
-
-export type FpgaEstimatesResponseData = Record<string, Estimate>
+export type FpgaEstimatesResponseData = EstimatesResponseData

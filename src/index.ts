@@ -1,12 +1,14 @@
-import HashrateNO from './HashrateNO.js'
+import Hashrateno from './Hashrateno.ts'
 
-export type * from './resources/asicEstimates.js'
-export type * from './resources/benchmarks.js'
-export type * from './resources/coins.js'
-export type * from './resources/cpuEstimates.js'
-export type * from './resources/depinEstimates.js'
-export type * from './resources/fpgaEstimates.js'
-export type * from './resources/gpuEstimates.js'
-export type * from './types.js'
+export * from './Hashrateno.ts'
+export * from './HashratenoError.ts'
+export type * from './resources/asicEstimates.ts'
+export type * from './resources/benchmarks.ts'
+export type * from './resources/coins.ts'
+export type * from './resources/cpuEstimates.ts'
+export type * from './resources/depinEstimates.ts'
+export type * from './resources/fpgaEstimates.ts'
+export type * from './resources/gpuEstimates.ts'
+export type * from './types.ts'
 
-export default HashrateNO
+export default Hashrateno

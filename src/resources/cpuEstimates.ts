@@ -1,11 +1,5 @@
-import type { Estimate } from '../types.js'
+import type { EstimatesRequestParams, EstimatesResponseData } from '../types.ts'
 
-/* RequestParams */
+export type CpuEstimatesRequestParams = EstimatesRequestParams
 
-export interface CpuEstimatesRequestParams {
-  powerCost?: number
-}
-
-/* ResponseData */
-
-export type CpuEstimatesResponseData = Record<string, Estimate>
+export type CpuEstimatesResponseData = EstimatesResponseData

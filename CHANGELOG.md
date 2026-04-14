@@ -1,4 +1,15 @@
-## Version 2.0.0
+## 3.0.0
+
+- Axios has been removed and replaced with the native fetch! Class options have
+  been changed:
+  - Instead of `axiosOptions?: CreateAxiosDefaults`, now
+    `fetchOptions?: RequestInit`.
+  - New option `baseURL?: string`.
+  - New option `fetch?: typeof fetch`.
+- Added `HashratenoError` error class, which is now thrown when API errors
+  occur.
+
+## 2.0.0
 
 - Hashrate.no API v2
 - Changed arguments of the HashrateNO class constructor. Now apiKey is passed as

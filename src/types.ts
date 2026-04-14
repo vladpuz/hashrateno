@@ -1,7 +1,15 @@
-import type { CreateAxiosDefaults } from 'axios'
+export interface EstimatesRequestParams {
+  powerCost?: number
+}
 
-export interface Options {
-  axiosOptions?: CreateAxiosDefaults
+export type EstimatesResponseData = Record<string, Estimate>
+
+export interface Estimate {
+  device: Device
+  profit: EstimateData
+  profit24h: EstimateData
+  revenue: EstimateData
+  revenue24h: EstimateData
 }
 
 export interface Device {
@@ -14,12 +22,4 @@ export interface EstimateData {
   yield: number
   revenue: number
   profit: number
-}
-
-export interface Estimate {
-  device: Device
-  profit: EstimateData
-  profit24h: EstimateData
-  revenue: EstimateData
-  revenue24h: EstimateData
 }

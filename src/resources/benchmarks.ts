@@ -1,10 +1,8 @@
-/* RequestParams */
-
 export interface BenchmarksRequestParams {
   coin: string
 }
 
-/* ResponseData */
+export type BenchmarksResponseData = Record<string, Benchmark>
 
 export interface Benchmark {
   name: string
@@ -15,5 +13,3 @@ export interface Benchmark {
   power: string
   efficiency: number
 }
-
-export type BenchmarksResponseData = Record<string, Benchmark>

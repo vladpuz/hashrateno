@@ -1,10 +1,8 @@
-/* RequestParams */
-
 export interface CoinsRequestParams {
   coin?: string
 }
 
-/* ResponseData */
+export type CoinsResponseData = Record<string, Coin>
 
 export interface Coin {
   ticker: string
@@ -34,5 +32,3 @@ export interface Coin {
     emissionUSD: number
   }
 }
-
-export type CoinsResponseData = Record<string, Coin>

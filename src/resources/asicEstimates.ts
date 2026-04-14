@@ -1,11 +1,5 @@
-import type { Estimate } from '../types.js'
+import type { EstimatesRequestParams, EstimatesResponseData } from '../types.ts'
 
-/* RequestParams */
+export type AsicEstimatesRequestParams = EstimatesRequestParams
 
-export interface AsicEstimatesRequestParams {
-  powerCost?: number
-}
-
-/* ResponseData */
-
-export type AsicEstimatesResponseData = Record<string, Estimate>
+export type AsicEstimatesResponseData = EstimatesResponseData

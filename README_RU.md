@@ -4,8 +4,9 @@
 
 Особенности:
 
-- Базируется на [axios](https://github.com/axios/axios)
-- Обработка ошибок через try...catch и instanceof
+- Базируется на нативном fetch
+- Удобная обработка ошибок
+- Полная типизация
 
 Официальная документация: [hashrate.no/c/api](https://hashrate.no/c/api)
 
@@ -20,10 +21,12 @@ npm install hashrateno
 ### Создание экземпляра
 
 ```typescript
-import HashrateNO from 'hashrateno'
+import Hashrateno from 'hashrateno'
 
-const hashrateno = new HashrateNO('<API_KEY>', {
-  axiosOptions: {}, // (optional) Axios instance options https://github.com/axios/axios
+const hashrateno = new Hashrateno('API_KEY', {
+  baseURL: 'https://hashrate.no/api/v2', // (optional) Override the default base URL for the API
+  fetch: globalThis.fetch, // (optional) Specify a custom `fetch` function implementation
+  fetchOptions: {}, // (optional) Additional `RequestInit` options to be passed to `fetch` calls
 })
 ```
 
@@ -52,25 +55,85 @@ const fpgaEstimates = await hashrateno.fpgaEstimates({ powerCost })
 const gpuEstimates = await hashrateno.gpuEstimates({ powerCost })
 ```
 
-### Конфигурация запросов
+## Опции fetch
 
-Все методы принимают опциональную конфигурацию запроса для axios последним
-параметром, например:
+Все методы принимают опции для fetch последним параметром, например:
 
 ```typescript
 const benchmarks = await hashrateno.benchmarks(
   { coin: 'RVN' },
   {
-    // axios config
+    // `RequestInit` options
   },
 )
 ```
 
-### Доступ к экземпляру axios
+## Обработка ошибок
 
-Используйте поле `hashrateno.axios`.
+Используйте класс `HashratenoError` для обработки ошибок.
 
-Обратитесь к документации [axios](https://github.com/axios/axios).
+Ошибки имеют поля с информацией `error.title` и `error.detail`.
+
+```typescript
+import { HashratenoError } from 'hashrateno'
+
+try {
+  const benchmarks = await hashrateno.benchmarks({ coin: 'RVN' })
+} catch (error) {
+  if (error instanceof HashratenoError) {
+    console.log(error.title, error.detail)
+  } else {
+    throw error
+  }
+}
+```
+
+## Retries
+
+Для повторных попыток рекомендуется использовать
+[p-retry](https://github.com/sindresorhus/p-retry):
+
+```typescript
+import pRetry from 'p-retry'
+
+const benchmarks = await pRetry(
+  async () => {
+    return await hashrateno.benchmarks({ coin: 'RVN' })
+  },
+  {
+    retries: 5,
+  },
+)
+```
+
+## Timeouts
+
+Используйте `AbortSignal.timeout`.
+
+Опции signal из fetchOptions экземпляра и опций запроса комбинируются. В
+следующем примере запрос будет прерван через 5 секунд, но так же может быть
+прерван раньше при вызове `controller.abort()`.
+
+```typescript
+const hashrateno = new Hashrateno('API_KEY', {
+  fetchOptions: {
+    signal: AbortSignal.timeout(5000),
+  },
+})
+
+const controller = new AbortController()
+
+setTimeout(() => {
+  controller.abort()
+}, 10000)
+
+const benchmarks = await hashrateno.benchmarks(
+  { coin: 'RVN' },
+  {
+    signal: controller.signal, // Combined with `AbortSignal.timeout(5000)`
+  },
+)
+```
 
 ## Лимиты вызова API
 

@@ -1,11 +1,5 @@
-import type { Estimate } from '../types.js'
+import type { EstimatesRequestParams, EstimatesResponseData } from '../types.ts'
 
-/* RequestParams */
+export type DepinEstimatesRequestParams = EstimatesRequestParams
 
-export interface DepinEstimatesRequestParams {
-  powerCost?: number
-}
-
-/* ResponseData */
-
-export type DepinEstimatesResponseData = Record<string, Estimate>
+export type DepinEstimatesResponseData = EstimatesResponseData
