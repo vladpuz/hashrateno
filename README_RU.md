@@ -25,8 +25,8 @@ import Hashrateno from 'hashrateno'
 
 const hashrateno = new Hashrateno('API_KEY', {
   baseURL: 'https://hashrate.no/api/v2', // (optional) Override the default base URL for the API
-  fetch: globalThis.fetch, // (optional) Specify a custom `fetch` function implementation
   fetchOptions: {}, // (optional) Additional `RequestInit` options to be passed to `fetch` calls
+  fetch: globalThis.fetch, // (optional) Specify a custom `fetch` function implementation
 })
 ```
 
@@ -108,29 +108,31 @@ const benchmarks = await pRetry(
 
 ## Timeouts
 
-Используйте `AbortSignal.timeout`.
-
-Опции signal из fetchOptions экземпляра и опций запроса комбинируются. В
-следующем примере запрос будет прерван через 5 секунд, но так же может быть
-прерван раньше при вызове `controller.abort()`.
+Используйте `AbortSignal.timeout`:
 
 ```typescript
-const hashrateno = new Hashrateno('API_KEY', {
-  fetchOptions: {
+const benchmarks = await hashrateno.benchmarks(
+  { coin: 'RVN' },
+  {
     signal: AbortSignal.timeout(5000),
   },
-})
+)
+```
 
+Комбинируйте сигналы с помощью `AbortSignal.any`. В следующем примере запрос
+будет прерван через 5 секунд, но так же может быть прерван раньше при вызове
+`controller.abort()`:
+
+```typescript
 const controller = new AbortController()
 
-setTimeout(() => {
-  controller.abort()
-}, 10000)
+// You can abort by event
+// controller.abort()
 
 const benchmarks = await hashrateno.benchmarks(
   { coin: 'RVN' },
   {
-    signal: controller.signal, // Combined with `AbortSignal.timeout(5000)`
+    signal: AbortSignal.any([AbortSignal.timeout(5000), controller.signal]),
   },
 )
 ```

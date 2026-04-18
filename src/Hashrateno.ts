@@ -12,57 +12,77 @@ import { HashratenoError } from './HashratenoError.ts'
 
 export interface Options {
   baseURL?: string
-  fetch?: typeof fetch
   fetchOptions?: RequestInit
+  fetch?: typeof fetch
 }
 
 class Hashrateno {
-  #baseURL: string
-  #fetch: typeof fetch
+  baseURL: string
+  fetchOptions: RequestInit
+  fetch: typeof fetch
+
+  #apiKey: string
 
   constructor(apiKey: string, options: Options = {}) {
-    this.#baseURL = options.baseURL ?? 'https://hashrate.no/api/v2'
+    this.baseURL = options.baseURL ?? 'https://hashrate.no/api/v2'
+    this.fetchOptions = options.fetchOptions ?? {}
+    this.fetch = options.fetch ?? fetch
 
-    const fetchFunction = options.fetch ?? fetch
-    const fetchOptions = options.fetchOptions ?? {}
+    this.#apiKey = apiKey
+  }
 
-    this.#fetch = async (input, init = {}) => {
-      if (input instanceof Request) {
-        throw new TypeError('Input must be a string or URL')
-      }
+  async #fetch(input: string | URL, init: RequestInit = {}): Promise<Response> {
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+    })
 
-      const headers = new Headers({
-        'Content-Type': 'application/json',
-      })
+    for (const [key, value] of new Headers(this.fetchOptions.headers)) {
+      headers.set(key, value)
+    }
 
-      for (const [key, value] of new Headers(fetchOptions.headers)) {
-        headers.set(key, value)
-      }
+    for (const [key, value] of new Headers(init.headers)) {
+      headers.set(key, value)
+    }
 
-      for (const [key, value] of new Headers(init.headers)) {
-        headers.set(key, value)
-      }
+    const signal = AbortSignal.any([
+      ...(this.fetchOptions.signal ? [this.fetchOptions.signal] : []),
+      ...(init.signal ? [init.signal] : []),
+    ])
 
-      const signal = AbortSignal.any([
-        ...(fetchOptions.signal ? [fetchOptions.signal] : []),
-        ...(init.signal ? [init.signal] : []),
-      ])
+    const mergedInit: RequestInit = {
+      ...this.fetchOptions,
+      ...init,
+      headers,
+      signal,
+    }
 
-      const mergedInit: RequestInit = {
-        ...fetchOptions,
-        ...init,
-        headers,
-        signal,
-      }
+    const url = new URL(input)
+    url.searchParams.set('apiKey', this.#apiKey)
 
-      const url = new URL(input)
-      url.searchParams.set('apiKey', apiKey)
+    const request = new Request(url, mergedInit)
+    let response: Response
 
-      const request = new Request(url, mergedInit)
-      let response: Response
+    try {
+      response = await this.fetch(request)
+    } catch (error) {
+      throw new HashratenoError(
+        error instanceof Error ? error.message : String(error),
+        {
+          cause: error,
+          init: mergedInit,
+          request,
+        },
+      )
+    }
+
+    const originalJson = response.json
+
+    // @ts-expect-error: json is readonly
+    response.json = async () => {
+      let data: unknown
 
       try {
-        response = await fetchFunction(request)
+        data = await originalJson.call(response)
       } catch (error) {
         throw new HashratenoError(
           error instanceof Error ? error.message : String(error),
@@ -70,64 +90,44 @@ class Hashrateno {
             cause: error,
             init: mergedInit,
             request,
+            response,
           },
         )
       }
 
-      const originalJson = response.json
-
-      // @ts-expect-error: json is readonly
-      response.json = async () => {
-        let data: unknown
-
-        try {
-          data = await originalJson.call(response)
-        } catch (error) {
-          throw new HashratenoError(
-            error instanceof Error ? error.message : String(error),
-            {
-              cause: error,
-              init: mergedInit,
-              request,
-              response,
-            },
-          )
-        }
-
-        if (typeof data !== 'object' || data === null) {
-          return data
-        }
-
-        const title = 'title' in data ? data.title : null
-        const detail = 'detail' in data ? data.detail : null
-
-        const isError = typeof title === 'string' && typeof detail === 'string'
-
-        if (!isError) {
-          return data
-        }
-
-        const errorMessage = `Title "${title}", detail "${detail}"`
-
-        throw new HashratenoError(errorMessage, {
-          init: mergedInit,
-          request,
-          response,
-          title,
-          detail,
-          data,
-        })
+      if (typeof data !== 'object' || data === null) {
+        return data
       }
 
-      return response
+      const title = 'title' in data ? data.title : null
+      const detail = 'detail' in data ? data.detail : null
+
+      const isError = typeof title === 'string' && typeof detail === 'string'
+
+      if (!isError) {
+        return data
+      }
+
+      const errorMessage = `Title "${title}", detail "${detail}"`
+
+      throw new HashratenoError(errorMessage, {
+        init: mergedInit,
+        request,
+        response,
+        title,
+        detail,
+        data,
+      })
     }
+
+    return response
   }
 
   async benchmarks(
     params: BenchmarksRequestParams,
     init: RequestInit = {},
   ): Promise<BenchmarksResponseData> {
-    const url = new URL(this.#baseURL + '/benchmarks')
+    const url = new URL(this.baseURL + '/benchmarks')
 
     for (const [key, value] of Object.entries(params)) {
       url.searchParams.set(key, String(value))
@@ -145,7 +145,7 @@ class Hashrateno {
     params: CoinsRequestParams = {},
     init: RequestInit = {},
   ): Promise<CoinsResponseData> {
-    const url = new URL(this.#baseURL + '/coins')
+    const url = new URL(this.baseURL + '/coins')
 
     for (const [key, value] of Object.entries(params)) {
       url.searchParams.set(key, String(value))
@@ -163,7 +163,7 @@ class Hashrateno {
     params: AsicEstimatesRequestParams = {},
     init: RequestInit = {},
   ): Promise<AsicEstimatesResponseData> {
-    const url = new URL(this.#baseURL + '/asicEstimates')
+    const url = new URL(this.baseURL + '/asicEstimates')
 
     for (const [key, value] of Object.entries(params)) {
       url.searchParams.set(key, String(value))
@@ -181,7 +181,7 @@ class Hashrateno {
     params: CpuEstimatesRequestParams = {},
     init: RequestInit = {},
   ): Promise<CpuEstimatesResponseData> {
-    const url = new URL(this.#baseURL + '/cpuEstimates')
+    const url = new URL(this.baseURL + '/cpuEstimates')
 
     for (const [key, value] of Object.entries(params)) {
       url.searchParams.set(key, String(value))
@@ -199,7 +199,7 @@ class Hashrateno {
     params: DepinEstimatesRequestParams = {},
     init: RequestInit = {},
   ): Promise<DepinEstimatesResponseData> {
-    const url = new URL(this.#baseURL + '/depinEstimates')
+    const url = new URL(this.baseURL + '/depinEstimates')
 
     for (const [key, value] of Object.entries(params)) {
       url.searchParams.set(key, String(value))
@@ -217,7 +217,7 @@ class Hashrateno {
     params: FpgaEstimatesRequestParams = {},
     init: RequestInit = {},
   ): Promise<FpgaEstimatesResponseData> {
-    const url = new URL(this.#baseURL + '/fpgaEstimates')
+    const url = new URL(this.baseURL + '/fpgaEstimates')
 
     for (const [key, value] of Object.entries(params)) {
       url.searchParams.set(key, String(value))
@@ -235,7 +235,7 @@ class Hashrateno {
     params: GpuEstimatesRequestParams = {},
     init: RequestInit = {},
   ): Promise<GpuEstimatesResponseData> {
-    const url = new URL(this.#baseURL + '/gpuEstimates')
+    const url = new URL(this.baseURL + '/gpuEstimates')
 
     for (const [key, value] of Object.entries(params)) {
       url.searchParams.set(key, String(value))

@@ -25,8 +25,8 @@ import Hashrateno from 'hashrateno'
 
 const hashrateno = new Hashrateno('API_KEY', {
   baseURL: 'https://hashrate.no/api/v2', // (optional) Override the default base URL for the API
-  fetch: globalThis.fetch, // (optional) Specify a custom `fetch` function implementation
   fetchOptions: {}, // (optional) Additional `RequestInit` options to be passed to `fetch` calls
+  fetch: globalThis.fetch, // (optional) Specify a custom `fetch` function implementation
 })
 ```
 
@@ -108,29 +108,31 @@ const benchmarks = await pRetry(
 
 ## Timeouts
 
-Use `AbortSignal.timeout`.
-
-Options signal from fetchOptions and request options are combined. In the
-following example, the request will be aborted after 5 seconds, but it can also
-be aborted earlier by calling `controller.abort()`.
+Use `AbortSignal.timeout`:
 
 ```typescript
-const hashrateno = new Hashrateno('API_KEY', {
-  fetchOptions: {
+const benchmarks = await hashrateno.benchmarks(
+  { coin: 'RVN' },
+  {
     signal: AbortSignal.timeout(5000),
   },
-})
+)
+```
 
+Combine signals using `AbortSignal.any`. In the following example, the request
+will be aborted after 5 seconds, but can also be aborted earlier by calling
+`controller.abort()`:
+
+```typescript
 const controller = new AbortController()
 
-setTimeout(() => {
-  controller.abort()
-}, 10000)
+// You can abort by event
+// controller.abort()
 
 const benchmarks = await hashrateno.benchmarks(
   { coin: 'RVN' },
   {
-    signal: controller.signal, // Combined with `AbortSignal.timeout(5000)`
+    signal: AbortSignal.any([AbortSignal.timeout(5000), controller.signal]),
   },
 )
 ```
