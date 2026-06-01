@@ -1,3 +1,7 @@
+## 3.0.2
+
+- Class field `apiKey` are now public and can be changed at runtime.
+
 ## 3.0.1
 
 - Class fields `baseURL`, `fetchOptions`, `fetch` are now public and can be

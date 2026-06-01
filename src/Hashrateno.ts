@@ -17,18 +17,16 @@ export interface Options {
 }
 
 class Hashrateno {
+  apiKey: string
   baseURL: string
   fetchOptions: RequestInit
   fetch: typeof fetch
 
-  #apiKey: string
-
   constructor(apiKey: string, options: Options = {}) {
+    this.apiKey = apiKey
     this.baseURL = options.baseURL ?? 'https://hashrate.no/api/v2'
     this.fetchOptions = options.fetchOptions ?? {}
     this.fetch = options.fetch ?? fetch
-
-    this.#apiKey = apiKey
   }
 
   async #fetch(input: string | URL, init: RequestInit = {}): Promise<Response> {
@@ -57,7 +55,7 @@ class Hashrateno {
     }
 
     const url = new URL(input)
-    url.searchParams.set('apiKey', this.#apiKey)
+    url.searchParams.set('apiKey', this.apiKey)
 
     const request = new Request(url, mergedInit)
     let response: Response
