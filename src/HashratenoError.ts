@@ -16,7 +16,7 @@ export class HashratenoError extends Error {
   data?: unknown
 
   constructor(message?: string, options?: HashratenoErrorOptions) {
-    super(message)
+    super(message, options)
     this.name = 'HashratenoError'
     Object.assign(this, options)
   }

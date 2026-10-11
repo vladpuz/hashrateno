@@ -3,8 +3,5 @@
     "@tsconfig/strictest/tsconfig.json",
     "@tsconfig/node-lts/tsconfig.json",
     "@tsconfig/node-ts/tsconfig.json"
-  ],
-  "compilerOptions": {
-    "types": ["node"]
-  }
+  ]
 }

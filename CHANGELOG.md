@@ -1,3 +1,8 @@
+## 3.0.3
+
+- HashratenoError now passes options to the constructor of the Error class it
+  extends.
+
 ## 3.0.2
 
 - Class field `apiKey` are now public and can be changed at runtime.
